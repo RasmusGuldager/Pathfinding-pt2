@@ -69,7 +69,7 @@ def main(print_path = False):
 
     grid = mazegenerator(width, height)
 
-    if pathalgorithm == "BFS":
+    if pathalgorithm == "bfs":
         path = BFS(grid, width, height)
 
     if print_path:
