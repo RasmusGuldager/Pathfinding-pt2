@@ -1,0 +1,21 @@
+# Update time in s:
+0.01
+
+# Algorithm for maze generation - dfs or prims:
+prims
+
+# Algorithm for pathfinding - bfs:
+bfs
+
+# Animation - yes or no:
+yes
+
+# Asciis available:
+1: ["─", "│", "└", "┘", "┌", "┐", "├", "┤", "┴", "┬", "┼"] 
+2: ["═", "║", "╚", "╝", "╔", "╗", "╠", "╣", "╩", "╦", "╬"]
+
+# Ascii for maze:
+1
+
+# Ascii for path:
+2
