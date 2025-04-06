@@ -61,11 +61,16 @@ def rainbow_256(i, freq=0.1):
 
 
 def main(print_path = False):
-    width = 141
-    height = 25
+    with open ("config.txt", "r") as f:
+        data = f.readlines()
+        pathalgorithm = data[7].strip()
+        width = int(data[13].strip())
+        height = int(data[16].strip())
+
     grid = mazegenerator(width, height)
 
-    path = BFS(grid, width, height)
+    if pathalgorithm == "BFS":
+        path = BFS(grid, width, height)
 
     if print_path:
         convert_ascii(grid, "path", path)

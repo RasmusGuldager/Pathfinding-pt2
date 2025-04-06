@@ -2,9 +2,9 @@ def convert_ascii(grid, condition, path = None):
     with open("config.txt", "r") as f:
         data = f.readlines()
         if condition == "wall":
-            ascii_number = int(data[17].strip())
+            ascii_number = int(data[19].strip())
         elif condition == "path":
-            ascii_number = int(data[20].strip())
+            ascii_number = int(data[22].strip())
 
     if ascii_number == 1:
         ascii_representation = ["─", "│", "└", "┘", "┌", "┐", "├", "┤", "┴", "┬", "┼"]
