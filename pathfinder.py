@@ -13,19 +13,22 @@ def BFS(grid, width, height):
 
     while len(open_set) > 0:
         current = open_set.pop(0)
-        
+
         closed_set.append(current)
         for neighbor in current.path_neighbors:
-            if neighbor not in closed_set and neighbor not in open_set and not neighbor.wall:
+            if (
+                neighbor not in closed_set
+                and neighbor not in open_set
+                and not neighbor.wall
+            ):
                 open_set.append(neighbor)
                 neighbor.prev = current
-  
-        
+
         if current == end:
             print("Path found!")
-            path = mark_path(current)     
+            path = mark_path(current)
             return path
-        
+
 
 def mark_path(current):
     color_range = list(range(16, 231))
@@ -38,12 +41,12 @@ def mark_path(current):
         current.color = rainbow_256(count)[0]
         count += 1
         current = current.prev
-    
+
     path.append(current)
-    path.reverse()  
+    path.reverse()
 
     return path
-    
+
 
 def rainbow_256(i, freq=0.1):
     # These formulas produce smooth transitions
@@ -60,8 +63,8 @@ def rainbow_256(i, freq=0.1):
     return f"\033[38;5;{color_code}m", color_code
 
 
-def main(print_path = False):
-    with open ("config.txt", "r") as f:
+def main(print_path=False):
+    with open("config", "r") as f:
         data = f.readlines()
         pathalgorithm = data[7].strip()
         width = int(data[13].strip())
@@ -83,5 +86,4 @@ def main(print_path = False):
 
 
 if __name__ == "__main__":
-    main(print_path = True)
-
+    main(print_path=True)
