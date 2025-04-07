@@ -2,6 +2,7 @@ import random
 from print_to_file import print_grid_to_file
 from convert_ascii import convert_ascii
 
+
 class Spot:
     def __init__(self, y, x):
         self.x = x
@@ -12,7 +13,7 @@ class Spot:
         self.icon = "#"
         self.color = None
         self.prev = None
-    
+
     def find_maze_neighbors(self, grid):
         if self.x > 2:
             self.maze_neighbors.append(grid[self.y][self.x - 2])
@@ -22,7 +23,7 @@ class Spot:
             self.maze_neighbors.append(grid[self.y - 2][self.x])
         if self.y < len(grid) - 3:
             self.maze_neighbors.append(grid[self.y + 2][self.x])
-    
+
     def find_path_neighbors(self, grid):
         if self.x > 0:
             self.path_neighbors.append(grid[self.y][self.x - 1])
@@ -32,6 +33,7 @@ class Spot:
             self.path_neighbors.append(grid[self.y - 1][self.x])
         if self.y < len(grid) - 1:
             self.path_neighbors.append(grid[self.y + 1][self.x])
+
 
 def generate_grid(width, height):
     grid = [[0 for _ in range(width)] for _ in range(height)]
@@ -44,7 +46,7 @@ def generate_grid(width, height):
         for x in range(width):
             grid[y][x].find_maze_neighbors(grid)
             grid[y][x].find_path_neighbors(grid)
-    
+
     grid[1][0].wall = False
     grid[height - 2][width - 1].wall = False
 
@@ -61,7 +63,7 @@ def prims_generate_maze(grid):
 
     for neighbor in start.maze_neighbors:
         open_set.append(neighbor)
- 
+
     while len(open_set) > 0:
         current = random.choice(open_set)
         open_set.remove(current)
@@ -84,9 +86,10 @@ def prims_generate_maze(grid):
 
         grid[path_y][path_x].wall = False
         grid[path_y][path_x].icon = " "
-    
+
     print("Generated maze!")
     return grid
+
 
 def dfs_generate_maze(grid):
     start = grid[1][1]
@@ -105,7 +108,7 @@ def dfs_generate_maze(grid):
         for neighbor in current.maze_neighbors:
             if neighbor.wall:
                 current_neighbors.append(neighbor)
-        
+
         if len(current_neighbors) == 0:
             current = open_set.pop()
 
@@ -120,9 +123,9 @@ def dfs_generate_maze(grid):
 
             current = chosen_connection
             open_set.append(current)
-        
+
         current_neighbors = []
-    
+
     print("Generated maze!")
     return grid
 
@@ -130,13 +133,13 @@ def dfs_generate_maze(grid):
 def mazegenerator(width, height):
     if width < 3 or height < 3:
         raise ValueError("Width and height must be at least 3.")
-    
+
     width += width % 2 == 0
     height += height % 2 == 0
 
     grid = generate_grid(width, height)
 
-    with open("config.txt", "r") as config_file:
+    with open("config", "r") as config_file:
         data = config_file.readlines()
         algorithm = data[4].strip()
 
@@ -153,3 +156,4 @@ def mazegenerator(width, height):
 
 if __name__ == "__main__":
     mazegenerator(121, 19)
+

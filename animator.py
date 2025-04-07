@@ -3,7 +3,7 @@ import pathfinder
 
 
 def animate_path(grid, path):
-    with open("config.txt", "r") as config_file:
+    with open("config", "r") as config_file:
         data = config_file.readlines()
         sleep_time = float(data[1].strip())
 
@@ -51,7 +51,7 @@ def animate_path(grid, path):
                 spot = path[j]
                 y, x = spot.y, spot.x
                 icon = spot.icon
-                color_attr = getattr(spot, 'color_pair', curses.A_NORMAL)
+                color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
                 stdscr.addstr(y, x, icon, color_attr)
 
             stdscr.refresh()
@@ -67,5 +67,5 @@ def main():
     animate_path(grid, path)
 
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
     main()

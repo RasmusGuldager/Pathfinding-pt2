@@ -1,5 +1,5 @@
-def convert_ascii(grid, condition, path = None):
-    with open("config.txt", "r") as f:
+def convert_ascii(grid, condition, path=None):
+    with open("config", "r") as f:
         data = f.readlines()
         if condition == "wall":
             ascii_number = int(data[19].strip())
@@ -11,19 +11,20 @@ def convert_ascii(grid, condition, path = None):
     elif ascii_number == 2:
         ascii_representation = ["═", "║", "╚", "╝", "╔", "╗", "╠", "╣", "╩", "╦", "╬"]
 
-
     if condition == "wall":
         for row in grid:
             for spot in row:
-                    if spot.wall:
-                        wall_count = 0
-                        directions = []
-                        for neighbor in spot.path_neighbors:
-                            if neighbor.wall:
-                                wall_count += 1
-                                directions.append(direction(neighbor.x - spot.x, neighbor.y - spot.y))
-                        update_spot_icon(spot, directions, wall_count, ascii_representation)
-                
+                if spot.wall:
+                    wall_count = 0
+                    directions = []
+                    for neighbor in spot.path_neighbors:
+                        if neighbor.wall:
+                            wall_count += 1
+                            directions.append(
+                                direction(neighbor.x - spot.x, neighbor.y - spot.y)
+                            )
+                    update_spot_icon(spot, directions, wall_count, ascii_representation)
+
     elif condition == "path":
         for spot in path:
             wall_count = 0
@@ -31,10 +32,13 @@ def convert_ascii(grid, condition, path = None):
             for neighbor in spot.path_neighbors:
                 if neighbor in path:
                     wall_count += 1
-                    directions.append(direction(neighbor.x - spot.x, neighbor.y - spot.y))
+                    directions.append(
+                        direction(neighbor.x - spot.x, neighbor.y - spot.y)
+                    )
             update_spot_icon(spot, directions, wall_count, ascii_representation)
-            
+
     return grid
+
 
 def update_spot_icon(spot, directions, wall_count, ascii_representation):
     if wall_count == 1:
@@ -69,6 +73,7 @@ def update_spot_icon(spot, directions, wall_count, ascii_representation):
     else:
         print("Error: Invalid wall count")
 
+
 def direction(x, y):
     if x == 0 and y == -1:
         return "S"
@@ -78,4 +83,3 @@ def direction(x, y):
         return "N"
     if x == -1 and y == 0:
         return "W"
-    
