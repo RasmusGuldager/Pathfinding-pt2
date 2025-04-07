@@ -11,10 +11,10 @@ bfs
 yes
 
 # Width of maze
-141
+161
 
 # Height of maze
-25
+43
 
 # Ascii for maze:
 1

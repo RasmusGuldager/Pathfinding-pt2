@@ -3,7 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-text_files/
+text_files/*
+
+!text_files/.gitkeep
 
 # C extensions
 *.so
