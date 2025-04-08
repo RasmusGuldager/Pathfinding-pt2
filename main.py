@@ -1,4 +1,4 @@
-import curses, time, yaml
+import curses, time, yaml, random
 from convert_ascii import convert_ascii
 import pathfinder
 
@@ -99,7 +99,13 @@ def main(config):
         )
 
 if __name__ == "__main__":
-    with open('config.yaml', 'r') as file:
-        config = yaml.safe_load(file)
+    try:
+        with open('config.yaml', 'r') as file:
+            config = yaml.safe_load(file)
 
-    main(config)
+        main(config)
+    except KeyboardInterrupt:
+        if random.randint(0, 15) == 0:
+            print("\n🗝️  You found a secret exit from the maze.\n")
+        else:
+            print("Closed maze\n")
