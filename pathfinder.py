@@ -59,8 +59,8 @@ def rainbow_256(i, freq=0.1):
     return f"\033[38;5;{color_code}m", color_code
 
 
-def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, start=None, print_path=False):
-    grid = mazegenerator(maze_algorithm, width, height, ascii_maze)
+def main(config, height, width, start=None, print_path=False):
+    grid = mazegenerator(config, height, width)
 
     if not start:
         start = grid[0][random.randrange(1, len(grid[0]), 2)]
@@ -71,11 +71,12 @@ def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, 
     start.wall = False
     end.wall = False
 
-    if path_algorithm == "bfs":
+    if config['algorithms']['path'] == "bfs":
         path = BFS(start, end)
 
+
     if print_path:
-        convert_ascii(grid, ascii_path, "path", path)
+        convert_ascii(config, grid, "path", path)
         start.icon = "S"
         end.icon = "E"
  
