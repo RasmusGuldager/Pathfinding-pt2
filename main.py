@@ -3,19 +3,22 @@ from convert_ascii import convert_ascii
 import pathfinder
 
 
-def animate_path(stdscr,config, grid, path, start, end):
+def animate_path(stdscr, config, term_height, grid, path, start, end):
     stdscr.clear()
 
     start.icon = "S"
     end.icon = "E"
+
     for y, row in enumerate(grid):
+        if y >= term_height:
+            break
         for x, spot in enumerate(row):
             try:
                 stdscr.addstr(y, x, spot.icon)
             except curses.error:
                 pass
         stdscr.refresh()
-        #time.sleep(0.1)
+        time.sleep(0.05)
     
     ascii_path = config['ascii']['path']
     ascii_path = config['ascii_sets'][ascii_path]
@@ -24,7 +27,7 @@ def animate_path(stdscr,config, grid, path, start, end):
     start.icon = "S"
     end.icon = "E"
 
-    #time.sleep(0.5)
+    time.sleep(0.5)
 
     curses.use_default_colors()
     if curses.COLORS >= 256:
@@ -42,21 +45,48 @@ def animate_path(stdscr,config, grid, path, start, end):
         for spot in path:
             spot.color_pair = curses.A_NORMAL
 
-    for i in range(len(path)):
-        for j in range(i + 1):
-            spot = path[j]
-            y, x = spot.y, spot.x
-            icon = spot.icon
-            color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
-            try:
-                stdscr.addstr(y, x, icon, color_attr)
-            except curses.error:
-                pass
+    offset = 0
 
+    while True:
+        stdscr.clear()
         stdscr.refresh()
-        time.sleep(config["update_time"])
+    
+        for y, row in enumerate(grid):
+            if y >= term_height + offset:
+                break
+            elif y < offset:
+                continue
+            for x, spot in enumerate(row):
+                try:
+                    stdscr.addstr(y-offset, x, spot.icon)
+                except curses.error:
+                    pass
+            stdscr.refresh()
+            time.sleep(0)
 
-    #time.sleep(0.5)
+        for i in range(len(path)):
+            if path[i].y >= offset + 20:
+                offset += 5
+                break
+            elif path[i].y < offset:
+                continue
+
+            for j in range(offset, i + 1):
+                spot = path[j]
+                y, x = spot.y-offset, spot.x
+                icon = spot.icon
+                color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
+                try:
+                    stdscr.addstr(y, x, icon, color_attr)
+                except curses.error:
+                    pass
+
+            stdscr.refresh()
+            time.sleep(config["update_time"])
+        if i >= len(path) - 1:
+            break
+
+    time.sleep(0.1)
 
 
 def curses_main(stdscr, config):
@@ -70,24 +100,25 @@ def curses_main(stdscr, config):
 
     while True:
         curr_size = stdscr.getmaxyx()
-        key = stdscr.getch()
 
         if curr_size != prev_size:
             return
         prev_size = curr_size
 
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
+
+        height = 100
           
         if not start:
             grid, path, start, end = pathfinder.main(
-            config, term_height, term_width)
+            config, height, term_width)
     
         else:
             grid, path, start, end = pathfinder.main(
-            config, term_height, term_width, start=end
+            config, height, term_width, start=end
         )
 
-        animate_path(stdscr, config, grid, path, start, end)
+        animate_path(stdscr, config, term_height, grid, path, start, end)
 
 
 def main(config):
