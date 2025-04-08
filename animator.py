@@ -9,7 +9,10 @@ def animate_path(stdscr, grid, path, ascii_path, sleep_time, start, end):
     end.icon = "E"
     for y, row in enumerate(grid):
         for x, spot in enumerate(row):
-            stdscr.addstr(y, x, spot.icon)
+            try:
+                stdscr.addstr(y, x, spot.icon)
+            except curses.error:
+                pass
         stdscr.refresh()
         time.sleep(0)
 
@@ -44,7 +47,10 @@ def animate_path(stdscr, grid, path, ascii_path, sleep_time, start, end):
             y, x = spot.y, spot.x
             icon = spot.icon
             color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
-            stdscr.addstr(y, x, icon, color_attr)
+            try:
+                stdscr.addstr(y, x, icon, color_attr)
+            except curses.error:
+                pass
 
         stdscr.refresh()
         time.sleep(sleep_time)
@@ -56,35 +62,42 @@ def curses_main(stdscr, update_time, maze_algorithm, path_algorithm, term_width,
     curses.curs_set(0)
     curses.start_color()
     start = None
+    stdscr.keypad(True)
+    stdscr.nodelay(True)
+
+    prev_size = stdscr.getmaxyx()
 
     while True:
-        term_height, term_width = stdscr.getmaxyx()
-        term_height, term_width = term_height - 1, term_width - 1
-        if not start:
-            grid, path, start, end = pathfinder.main(
+        curr_size = stdscr.getmaxyx()
+        key = stdscr.getch()
+
+        if curr_size != prev_size:
+            return
+        prev_size = curr_size
+
+
+        term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
+
+        grid, path, start, end = pathfinder.main(
             maze_algorithm, path_algorithm, term_width, term_height, ascii_maze, ascii_path
-        )
-        else:
-            grid, path, start, end = pathfinder.main(
-            maze_algorithm, path_algorithm, term_width, term_height, ascii_maze, ascii_path, start=end
         )
 
         animate_path(stdscr, grid, path, ascii_path, update_time, start, end)
 
-
 def main(update_time, maze_algorithm, path_algorithm, term_width, term_height,
          ascii_maze, ascii_path):
     
-    curses.wrapper(
-        curses_main,
-        update_time, 
-        maze_algorithm, 
-        path_algorithm, 
-        term_width, 
-        term_height, 
-        ascii_maze, 
-        ascii_path
-    )
+    while True:
+        curses.wrapper(
+            curses_main,
+            update_time, 
+            maze_algorithm, 
+            path_algorithm, 
+            term_width, 
+            term_height, 
+            ascii_maze, 
+            ascii_path
+        )
 
 if __name__ == "__main__":
     main()
