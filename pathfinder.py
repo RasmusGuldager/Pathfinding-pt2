@@ -1,6 +1,4 @@
 from mazegenerator import mazegenerator
-from print_to_file import print_grid_to_file
-from convert_ascii import convert_ascii
 import math, random
 
 
@@ -34,7 +32,7 @@ def mark_path(current):
 
     while current.prev is not None:
         path.append(current)
-        current.color = rainbow_256(count)[0]
+        current.color_code = rainbow_256(count)
         count += 1
         current = current.prev
 
@@ -56,13 +54,13 @@ def rainbow_256(i, freq=0.1):
     b_code = int(b * 6 / 256)
 
     color_code = 16 + 36 * r_code + 6 * g_code + b_code
-    return f"\033[38;5;{color_code}m", color_code
+    return color_code
 
 
-def main(config, height, width, start=None, print_path=False):
+def main(config, height, width, start=None):
     grid = mazegenerator(config, height, width)
 
-    if not start:
+    if start is None:
         start = grid[0][random.randrange(1, len(grid[0]), 2)]
     else:
         start = grid[0][start.x]
@@ -78,16 +76,4 @@ def main(config, height, width, start=None, print_path=False):
     if config['algorithms']['path'] == "bfs":
         path = BFS(start, end)
 
-
-    if print_path:
-        convert_ascii(config, grid, "path", path)
-        start.icon = "S"
-        end.icon = "E"
- 
-    print_grid_to_file(grid, "solved_maze.txt")
-
     return grid, path, start, end
-
-
-if __name__ == "__main__":
-    main(print_path=True)

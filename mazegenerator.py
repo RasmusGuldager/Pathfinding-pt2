@@ -1,5 +1,4 @@
 import random
-from print_to_file import print_grid_to_file
 from convert_ascii import convert_ascii
 
 
@@ -11,7 +10,7 @@ class Spot:
         self.maze_neighbors = []
         self.path_neighbors = []
         self.icon = "#"
-        self.color = None
+        self.color_code = None
         self.prev = None
 
     def find_maze_neighbors(self, grid):
@@ -150,11 +149,9 @@ def mazegenerator(config, height, width):
         dfs_generate_maze(grid)
 
     grid = convert_ascii(config, grid, "wall")
-    print_grid_to_file(grid, "maze.txt")
 
     return grid
 
 
 if __name__ == "__main__":
     mazegenerator(121, 19)
-

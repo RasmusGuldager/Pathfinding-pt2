@@ -1,5 +1,3 @@
-animation: True
-
 # Update time in s
 update_time: 0.02
 
