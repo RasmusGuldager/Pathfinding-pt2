@@ -1,7 +1,7 @@
 animation: True
 
 # Update time in s
-update_time: 0.03
+update_time: 0.02
 
 algorithms:
   # Choose between dfs and prims

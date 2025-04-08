@@ -67,7 +67,11 @@ def main(config, height, width, start=None, print_path=False):
     else:
         start = grid[0][start.x]
 
-    end = grid[height - 1][random.randrange(1, len(grid[0]), 2)]
+    if height % 2 == 0:
+        end = grid[height][random.randrange(1, len(grid[0]), 2)]
+    else:
+        end = grid[height - 1][random.randrange(1, len(grid[0]), 2)]
+        
     start.wall = False
     end.wall = False
 
