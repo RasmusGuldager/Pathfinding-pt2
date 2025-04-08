@@ -22,7 +22,7 @@ def BFS(start, end):
                 neighbor.prev = current
 
         if current == end:
-            print("Path found!")
+            #print("Path found!")
             path = mark_path(current)
             return path
 

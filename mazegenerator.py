@@ -88,7 +88,7 @@ def prims_generate_maze(grid):
         grid[path_y][path_x].wall = False
         grid[path_y][path_x].icon = " "
 
-    print("Generated maze!")
+    #print("Generated maze!")
     return grid
 
 
