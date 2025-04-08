@@ -10,7 +10,7 @@ algorithms:
   # Choose bfs
   path: bfs
 
-# Width and height of the maze
+# Width and height of the maze (only if no animation)
 dimensions:
   width: 141
   height: 33
