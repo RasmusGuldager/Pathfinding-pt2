@@ -19,13 +19,7 @@ if __name__ == "__main__":
         ascii_path = config['ascii_sets'][ascii_path]
 
     if animation:
-        animator.main(update_time, maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path)
+        animator.main(config)
     else:
-        pathfinder.main(maze_algorithm=maze_algorithm, 
-                        path_algorithm=path_algorithm, 
-                        width=width, 
-                        height=height, 
-                        ascii_maze=ascii_maze, 
-                        ascii_path=ascii_path,
-                        print_path=True)
+        pathfinder.main(config, config["width"], config["height"], print_path=True)
 

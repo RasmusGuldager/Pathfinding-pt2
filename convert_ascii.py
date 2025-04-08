@@ -1,5 +1,8 @@
-def convert_ascii(grid, ascii_representation, condition, path=None):
+def convert_ascii(config, grid, condition, path=None):
     if condition == "wall":
+        ascii_representation = config['ascii']['maze']
+        ascii_representation = config['ascii_sets'][ascii_representation]
+
         for row in grid:
             for spot in row:
                 if spot.wall:
@@ -14,6 +17,9 @@ def convert_ascii(grid, ascii_representation, condition, path=None):
                     update_spot_icon(spot, directions, wall_count, ascii_representation)
 
     elif condition == "path":
+        ascii_representation = config['ascii']['path']
+        ascii_representation = config['ascii_sets'][ascii_representation]
+
         for spot in path:
             wall_count = 0
             directions = []
