@@ -59,10 +59,14 @@ def rainbow_256(i, freq=0.1):
     return f"\033[38;5;{color_code}m", color_code
 
 
-def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, print_path=False):
+def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, start=None, print_path=False):
     grid = mazegenerator(maze_algorithm, width, height, ascii_maze)
 
-    start = grid[0][random.randrange(1, len(grid[0]), 2)]
+    if not start:
+        start = grid[0][random.randrange(1, len(grid[0]), 2)]
+    else:
+        start = grid[0][start.x]
+
     end = grid[height - 1][random.randrange(1, len(grid[0]), 2)]
     start.wall = False
     end.wall = False

@@ -11,7 +11,7 @@ def animate_path(stdscr, grid, path, ascii_path, sleep_time, start, end):
         for x, spot in enumerate(row):
             stdscr.addstr(y, x, spot.icon)
         stdscr.refresh()
-        time.sleep(0.05)
+        time.sleep(0)
 
 
     pathfinder.convert_ascii(grid, ascii_path, "path", path)
@@ -55,10 +55,16 @@ def animate_path(stdscr, grid, path, ascii_path, sleep_time, start, end):
 def curses_main(stdscr, update_time, maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path):
     curses.curs_set(0)
     curses.start_color()
+    start = None
 
     while True:
-        grid, path, start, end = pathfinder.main(
+        if not start:
+            grid, path, start, end = pathfinder.main(
             maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path
+        )
+        else:
+            grid, path, start, end = pathfinder.main(
+            maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, start=end
         )
 
         animate_path(stdscr, grid, path, ascii_path, update_time, start, end)
