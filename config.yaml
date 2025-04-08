@@ -1,0 +1,25 @@
+# Update time in s
+update_time: 0.01
+
+animation: True
+
+algorithms:
+  # Choose between dfs and prims
+  maze: dfs
+
+  # Choose bfs
+  path: bfs
+
+# Width and height of the maze
+dimensions:
+  width: 141
+  height: 33
+
+# Choose ascii from ascii sets
+ascii:
+  maze: 1
+  path: 2
+
+ascii_sets:
+  1: ["─", "│", "└", "┘", "┌", "┐", "├", "┤", "┴", "┬", "┼"]
+  2: ["═", "║", "╚", "╝", "╔", "╗", "╠", "╣", "╩", "╦", "╬"]

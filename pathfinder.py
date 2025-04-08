@@ -63,20 +63,14 @@ def rainbow_256(i, freq=0.1):
     return f"\033[38;5;{color_code}m", color_code
 
 
-def main(print_path=False):
-    with open("config", "r") as f:
-        data = f.readlines()
-        pathalgorithm = data[7].strip()
-        width = int(data[13].strip())
-        height = int(data[16].strip())
+def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, print_path=False):
+    grid = mazegenerator(maze_algorithm, width, height, ascii_maze)
 
-    grid = mazegenerator(width, height)
-
-    if pathalgorithm == "bfs":
+    if path_algorithm == "bfs":
         path = BFS(grid, width, height)
 
     if print_path:
-        convert_ascii(grid, "path", path)
+        convert_ascii(grid, ascii_path, "path", path)
         grid[1][0].icon = "S"
         grid[height - 2][width - 1].icon = "E"
 

@@ -130,7 +130,7 @@ def dfs_generate_maze(grid):
     return grid
 
 
-def mazegenerator(width, height):
+def mazegenerator(maze_algorithm, width, height, ascii_maze):
     if width < 3 or height < 3:
         raise ValueError("Width and height must be at least 3.")
 
@@ -139,16 +139,12 @@ def mazegenerator(width, height):
 
     grid = generate_grid(width, height)
 
-    with open("config", "r") as config_file:
-        data = config_file.readlines()
-        algorithm = data[4].strip()
-
-    if algorithm == "prims":
+    if maze_algorithm == "prims":
         prims_generate_maze(grid)
-    elif algorithm == "dfs":
+    elif maze_algorithm == "dfs":
         dfs_generate_maze(grid)
 
-    grid = convert_ascii(grid, "wall")
+    grid = convert_ascii(grid, ascii_maze, "wall")
     print_grid_to_file(grid, "maze.txt")
 
     return grid

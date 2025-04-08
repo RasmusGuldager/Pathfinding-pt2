@@ -1,16 +1,4 @@
-def convert_ascii(grid, condition, path=None):
-    with open("config", "r") as f:
-        data = f.readlines()
-        if condition == "wall":
-            ascii_number = int(data[19].strip())
-        elif condition == "path":
-            ascii_number = int(data[22].strip())
-
-    if ascii_number == 1:
-        ascii_representation = ["─", "│", "└", "┘", "┌", "┐", "├", "┤", "┴", "┬", "┼"]
-    elif ascii_number == 2:
-        ascii_representation = ["═", "║", "╚", "╝", "╔", "╗", "╠", "╣", "╩", "╦", "╬"]
-
+def convert_ascii(grid, ascii_representation, condition, path=None):
     if condition == "wall":
         for row in grid:
             for spot in row:
