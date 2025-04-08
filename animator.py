@@ -2,15 +2,15 @@ import curses, time
 import pathfinder
 
 
-def animate_path(grid, path, ascii_path, sleep_time):
+def animate_path(grid, path, ascii_path, sleep_time, start, end):
     def draw(stdscr):
         curses.curs_set(0)
         curses.start_color()
         stdscr.clear()
 
         # Draw the static maze
-        grid[1][0].icon = "S"
-        grid[len(grid) - 2][len(grid[0]) - 1].icon = "E"
+        start.icon = "S"
+        end.icon = "E"
         for y, row in enumerate(grid):
             for x, spot in enumerate(row):
                 stdscr.addstr(y, x, spot.icon)
@@ -18,8 +18,8 @@ def animate_path(grid, path, ascii_path, sleep_time):
         stdscr.refresh()
 
         pathfinder.convert_ascii(grid, ascii_path, "path", path)
-        grid[1][0].icon = "S"
-        grid[len(grid) - 2][len(grid[0]) - 1].icon = "E"
+        start.icon = "S"
+        end.icon = "E"
         pathfinder.print_grid_to_file(grid, "solved_maze.txt")
 
         time.sleep(0.5)  # Pause before path animation
@@ -59,8 +59,9 @@ def animate_path(grid, path, ascii_path, sleep_time):
 
 
 def main(update_time, maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path):
-    grid, path = pathfinder.main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path)
-    animate_path(grid, path, ascii_path, update_time)
+    grid, path, start, end = pathfinder.main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path)
+
+    animate_path(grid, path, ascii_path, update_time, start, end)
 
 
 if __name__ == "__main__":

@@ -47,14 +47,15 @@ def generate_grid(width, height):
             grid[y][x].find_maze_neighbors(grid)
             grid[y][x].find_path_neighbors(grid)
 
-    grid[1][0].wall = False
-    grid[height - 2][width - 1].wall = False
-
     return grid
 
 
 def prims_generate_maze(grid):
-    start = grid[1][1]
+    row = random.randrange(1, len(grid), 2)
+    col = random.randrange(1, len(grid[0]), 2)
+
+    start = grid[row][col]
+
     start.wall = False
     start.icon = " "
 
@@ -92,7 +93,11 @@ def prims_generate_maze(grid):
 
 
 def dfs_generate_maze(grid):
-    start = grid[1][1]
+    row = random.randrange(1, len(grid), 2)
+    col = random.randrange(1, len(grid[0]), 2)
+
+    start = grid[row][col]
+
     start.wall = False
     start.icon = " "
 

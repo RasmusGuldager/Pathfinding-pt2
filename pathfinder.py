@@ -1,13 +1,10 @@
 from mazegenerator import mazegenerator
 from print_to_file import print_grid_to_file
 from convert_ascii import convert_ascii
-import math, curses, time
+import math, random
 
 
-def BFS(grid, width, height):
-    start = grid[1][0]
-    end = grid[height - 2][width - 1]
-
+def BFS(start, end):
     open_set = [start]
     closed_set = []
 
@@ -31,7 +28,6 @@ def BFS(grid, width, height):
 
 
 def mark_path(current):
-    color_range = list(range(16, 231))
     path = [current]
     current = current.prev
     count = 0
@@ -66,17 +62,22 @@ def rainbow_256(i, freq=0.1):
 def main(maze_algorithm, path_algorithm, width, height, ascii_maze, ascii_path, print_path=False):
     grid = mazegenerator(maze_algorithm, width, height, ascii_maze)
 
+    start = grid[0][random.randrange(1, len(grid[0]), 2)]
+    end = grid[height - 1][random.randrange(1, len(grid[0]), 2)]
+    start.wall = False
+    end.wall = False
+
     if path_algorithm == "bfs":
-        path = BFS(grid, width, height)
+        path = BFS(start, end)
 
     if print_path:
         convert_ascii(grid, ascii_path, "path", path)
-        grid[1][0].icon = "S"
-        grid[height - 2][width - 1].icon = "E"
-
+        start.icon = "S"
+        end.icon = "E"
+ 
     print_grid_to_file(grid, "solved_maze.txt")
 
-    return grid, path
+    return grid, path, start, end
 
 
 if __name__ == "__main__":
