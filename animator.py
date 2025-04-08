@@ -59,7 +59,7 @@ def curses_main(stdscr, update_time, maze_algorithm, path_algorithm, term_width,
 
     while True:
         term_height, term_width = stdscr.getmaxyx()
-        term_height -= 1
+        term_height, term_width = term_height - 1, term_width - 1
         if not start:
             grid, path, start, end = pathfinder.main(
             maze_algorithm, path_algorithm, term_width, term_height, ascii_maze, ascii_path
