@@ -9,7 +9,10 @@ def animate_path(stdscr,config, grid, path, start, end):
     end.icon = "E"
     for y, row in enumerate(grid):
         for x, spot in enumerate(row):
-            stdscr.addstr(y, x, spot.icon)
+            try:
+                stdscr.addstr(y, x, spot.icon)
+            except curses.error:
+                pass
         stdscr.refresh()
         time.sleep(0)
     
@@ -46,7 +49,10 @@ def animate_path(stdscr,config, grid, path, start, end):
             y, x = spot.y, spot.x
             icon = spot.icon
             color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
-            stdscr.addstr(y, x, icon, color_attr)
+            try:
+                stdscr.addstr(y, x, icon, color_attr)
+            except curses.error:
+                pass
 
         stdscr.refresh()
         time.sleep(config["update_time"])
@@ -58,10 +64,21 @@ def curses_main(stdscr, config):
     curses.curs_set(0)
     curses.start_color()
     start = None
+    stdscr.keypad(True)
+    stdscr.nodelay(True)
+
+    prev_size = stdscr.getmaxyx()
 
     while True:
-        term_height, term_width = stdscr.getmaxyx()
-        term_height, term_width = term_height - 1, term_width - 1
+        curr_size = stdscr.getmaxyx()
+        key = stdscr.getch()
+
+        if curr_size != prev_size:
+            return
+        prev_size = curr_size
+
+        term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
+          
         if not start:
             grid, path, start, end = pathfinder.main(
             config, term_height, term_width)
@@ -76,10 +93,11 @@ def curses_main(stdscr, config):
 
 def main(config):
     
-    curses.wrapper(
-        curses_main,
-        config,
-    )
+    while True:
+        curses.wrapper(
+            curses_main,
+            config,
+        )
 
 if __name__ == "__main__":
     main()
