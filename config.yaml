@@ -1,5 +1,5 @@
 # Update time in s
-update_time: 0.04
+update_time: 0.1
 
 algorithms:
   # Choose between dfs and prims

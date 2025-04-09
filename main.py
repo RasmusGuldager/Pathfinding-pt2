@@ -19,9 +19,9 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
                 pass
         stdscr.refresh()
         time.sleep(0.05)
-    
-    ascii_path = config['ascii']['path']
-    ascii_path = config['ascii_sets'][ascii_path]
+
+    ascii_path = config["ascii"]["path"]
+    ascii_path = config["ascii_sets"][ascii_path]
 
     time.sleep(0.5)
 
@@ -42,16 +42,26 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
             spot.color_pair = curses.A_NORMAL
 
     convert_ascii(config, grid, "path", path)
-    drawn_path = []
+    drawn_path = set()
     offset = 0
+    start.icon = "S"
+
+    for i in range(19):
+        for j in range(offset, i + 1):
+            spot = path[j]
+            y, x = spot.y, spot.x
+            color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
+            try:
+                stdscr.addstr(y, x, spot.icon, color_attr)
+                drawn_path.add(spot)
+            except curses.error:
+                pass
+
+        stdscr.refresh()
+        time.sleep(config["update_time"])
+
 
     while True:
-        stdscr.clear()
-        stdscr.refresh()
-        
-        start.icon = "S"
-        end.icon = "E"
-    
         for y, row in enumerate(grid):
             if y >= term_height + offset:
                 break
@@ -59,30 +69,40 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
                 continue
             for x, spot in enumerate(row):
                 try:
-                    if spot.wall:  
-                        stdscr.addstr(y-offset, x, spot.icon)
+                    if spot.wall:
+                        stdscr.addstr(y - offset, x, spot.icon)
                     elif spot in drawn_path:
                         color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
-                        stdscr.addstr(y-offset, x, spot.icon, color_attr)
+                        stdscr.addstr(y - offset, x, spot.icon, color_attr)
+                    else:
+                        stdscr.addstr(y - offset, x, " ")
                 except curses.error:
                     pass
-            stdscr.refresh()
-            time.sleep(0)
+        stdscr.refresh()
+
+        if y < term_height + offset:
+            while y - offset < term_height:
+                for x in range(len(row)):
+                    try:
+                        stdscr.addstr(y - offset + 1, x, " ")
+                    except curses.error:
+                        pass
+                y += 1
 
         for i in range(len(path)):
             if path[i].y >= offset + 20:
-                offset += 5
+                offset += 1
                 break
-            elif path[i].y < offset + 15:
+            elif path[i] in drawn_path:
                 continue
 
             for j in range(offset, i + 1):
                 spot = path[j]
-                y, x = spot.y-offset, spot.x
+                y, x = spot.y - offset, spot.x
                 color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
                 try:
                     stdscr.addstr(y, x, spot.icon, color_attr)
-                    drawn_path.append(spot)
+                    drawn_path.add(spot)
                 except curses.error:
                     pass
 
@@ -113,29 +133,29 @@ def curses_main(stdscr, config):
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
         height = 100
-          
+
         if not start:
-            grid, path, start, end = pathfinder.main(
-            config, height, term_width)
-    
+            grid, path, start, end = pathfinder.main(config, height, term_width)
+
         else:
             grid, path, start, end = pathfinder.main(
-            config, height, term_width, start=end
-        )
+                config, height, term_width, start=end
+            )
 
         animate_path(stdscr, config, term_height, grid, path, start, end)
 
 
 def main(config):
-    
+
     while True:
         curses.wrapper(
             curses_main,
             config,
         )
 
+
 if __name__ == "__main__":
-    with open('config.yaml', 'r') as file:
+    with open("config.yaml", "r") as file:
         config = yaml.safe_load(file)
 
     main(config)
