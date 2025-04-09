@@ -3,7 +3,7 @@ from convert_ascii import convert_ascii, rainbow_256
 import pathfinder
 
 
-def animate_path(stdscr, config, term_height, grid, path, start, end):
+def animate_path(stdscr, config, term_height, grid, path):
     stdscr.clear()
 
     for y, row in enumerate(grid):
@@ -22,6 +22,7 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
 
     time.sleep(0.5)
 
+    # Set color pairs for path
     curses.use_default_colors()
     if curses.COLORS >= 256:
         for i, spot in enumerate(path):
@@ -135,7 +136,7 @@ def curses_main(stdscr, config):
         path = []
         start = None
 
-        iterations = 10
+        iterations = 50
 
         for i in range(iterations):
             if not start:
@@ -178,7 +179,7 @@ def curses_main(stdscr, config):
 
         convert_ascii(config, grid, "wall")
 
-        animate_path(stdscr, config, term_height, grid, path, start, end)
+        animate_path(stdscr, config, term_height, grid, path)
 
 
 def main(config):
