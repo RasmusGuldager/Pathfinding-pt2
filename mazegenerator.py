@@ -88,7 +88,7 @@ def prims_generate_maze(grid):
         grid[path_y][path_x].wall = False
         grid[path_y][path_x].icon = " "
 
-    #print("Generated maze!")
+    # print("Generated maze!")
     return grid
 
 
@@ -131,7 +131,7 @@ def dfs_generate_maze(grid):
 
         current_neighbors = []
 
-    #print("Generated maze!")
+    # print("Generated maze!")
     return grid
 
 
@@ -144,9 +144,9 @@ def mazegenerator(config, height, width):
 
     grid = generate_grid(width, height)
 
-    if config['algorithms']['maze'] == "prims":
+    if config["algorithms"]["maze"] == "prims":
         prims_generate_maze(grid)
-    elif config['algorithms']['maze'] == "dfs":
+    elif config["algorithms"]["maze"] == "dfs":
         dfs_generate_maze(grid)
 
     grid = convert_ascii(config, grid, "wall")

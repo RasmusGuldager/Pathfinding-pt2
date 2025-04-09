@@ -1,4 +1,4 @@
-import curses, time, yaml
+import curses, time, yaml, random
 from convert_ascii import convert_ascii
 import pathfinder
 
@@ -58,7 +58,6 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
 
         stdscr.refresh()
         time.sleep(config["update_time"])
-
 
     while True:
         # Draw maze with already drawn path
@@ -134,15 +133,33 @@ def curses_main(stdscr, config):
 
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
-        height = 200
+        height = 40
+        grid = []
+        path = []
 
-        if not start:
-            grid, path, start, end = pathfinder.main(config, height, term_width)
+        for _ in range(5):
+            if not start:
+                temp_grid, temp_path, start, end = pathfinder.main(
+                    config, height, term_width
+                )
+                temp_grid.pop()
+                temp_path.pop()
 
-        else:
-            grid, path, start, end = pathfinder.main(
-                config, height, term_width, start=end
-            )
+            else:
+                temp_grid, temp_path, start, end = pathfinder.main(
+                    config, height, term_width, start=end
+                )
+                temp_grid.pop()
+                temp_path.pop()
+
+            for spot in range(len(temp_path)):
+                temp_path[spot].path_id = len(path) + spot
+            for row in temp_grid:
+                for spot in row:
+                    spot.y = len(grid) + spot.y
+
+            grid.extend(temp_grid)
+            path.extend(temp_path)
 
         animate_path(stdscr, config, term_height, grid, path, start, end)
 
@@ -157,7 +174,13 @@ def main(config):
 
 
 if __name__ == "__main__":
-    with open("config.yaml", "r") as file:
-        config = yaml.safe_load(file)
+    try:
+        with open("config.yaml", "r") as file:
+            config = yaml.safe_load(file)
 
-    main(config)
+        main(config)
+    except KeyboardInterrupt:
+        if random.randint(0, 15) == 0:
+            print("\n🗝️  You found a secret exit from the maze.\n")
+        else:
+            print("Closed maze\n")
