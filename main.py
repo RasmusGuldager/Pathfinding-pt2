@@ -23,10 +23,6 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
     ascii_path = config['ascii']['path']
     ascii_path = config['ascii_sets'][ascii_path]
 
-    convert_ascii(config, grid, "path", path)
-    start.icon = "S"
-    end.icon = "E"
-
     time.sleep(0.5)
 
     curses.use_default_colors()
@@ -45,11 +41,16 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
         for spot in path:
             spot.color_pair = curses.A_NORMAL
 
+    convert_ascii(config, grid, "path", path)
+    drawn_path = []
     offset = 0
 
     while True:
         stdscr.clear()
         stdscr.refresh()
+        
+        start.icon = "S"
+        end.icon = "E"
     
         for y, row in enumerate(grid):
             if y >= term_height + offset:
@@ -58,7 +59,11 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
                 continue
             for x, spot in enumerate(row):
                 try:
-                    stdscr.addstr(y-offset, x, spot.icon)
+                    if spot.wall:  
+                        stdscr.addstr(y-offset, x, spot.icon)
+                    elif spot in drawn_path:
+                        color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
+                        stdscr.addstr(y-offset, x, spot.icon, color_attr)
                 except curses.error:
                     pass
             stdscr.refresh()
@@ -68,16 +73,16 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
             if path[i].y >= offset + 20:
                 offset += 5
                 break
-            elif path[i].y < offset:
+            elif path[i].y < offset + 15:
                 continue
 
             for j in range(offset, i + 1):
                 spot = path[j]
                 y, x = spot.y-offset, spot.x
-                icon = spot.icon
                 color_attr = getattr(spot, "color_pair", curses.A_NORMAL)
                 try:
-                    stdscr.addstr(y, x, icon, color_attr)
+                    stdscr.addstr(y, x, spot.icon, color_attr)
+                    drawn_path.append(spot)
                 except curses.error:
                     pass
 
