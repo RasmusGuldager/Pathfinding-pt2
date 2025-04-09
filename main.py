@@ -1,13 +1,10 @@
 import curses, time, yaml, random
-from convert_ascii import convert_ascii
+from convert_ascii import convert_ascii, rainbow_256
 import pathfinder
 
 
 def animate_path(stdscr, config, term_height, grid, path, start, end):
     stdscr.clear()
-
-    start.icon = "S"
-    end.icon = "E"
 
     for y, row in enumerate(grid):
         if y >= term_height:
@@ -44,7 +41,6 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
     convert_ascii(config, grid, "path", path)
     offset = 0
     drawn_path = 19
-    start.icon = "S"
 
     for i in range(19):
         for j in range(offset, i + 1):
@@ -112,13 +108,12 @@ def animate_path(stdscr, config, term_height, grid, path, start, end):
         if i >= len(path) - 1:
             break
 
-    time.sleep(0.1)
+    time.sleep(0.5)
 
 
 def curses_main(stdscr, config):
     curses.curs_set(0)
     curses.start_color()
-    start = None
     stdscr.keypad(True)
     stdscr.nodelay(True)
 
@@ -131,16 +126,28 @@ def curses_main(stdscr, config):
             return
         prev_size = curr_size
 
+        height = 20
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
-        height = 40
+        height += height % 2 == 0
+
         grid = []
         path = []
+        start = None
 
-        for _ in range(5):
+        iterations = 10
+
+        for i in range(iterations):
             if not start:
                 temp_grid, temp_path, start, end = pathfinder.main(
                     config, height, term_width
+                )
+                temp_grid.pop()
+                temp_path.pop()
+
+            elif i < iterations - 1:
+                temp_grid, temp_path, start, end = pathfinder.main(
+                    config, height, term_width, start=end
                 )
                 temp_grid.pop()
                 temp_path.pop()
@@ -149,17 +156,27 @@ def curses_main(stdscr, config):
                 temp_grid, temp_path, start, end = pathfinder.main(
                     config, height, term_width, start=end
                 )
-                temp_grid.pop()
-                temp_path.pop()
 
             for spot in range(len(temp_path)):
                 temp_path[spot].path_id = len(path) + spot
+
             for row in temp_grid:
                 for spot in row:
                     spot.y = len(grid) + spot.y
 
             grid.extend(temp_grid)
             path.extend(temp_path)
+
+        for row in grid:
+            for spot in row:
+                spot.find_path_neighbors(grid)
+
+        random_seed = random.randint(0, 255)
+
+        for i in range(len(path)):
+            path[i].color_code = rainbow_256(i + random_seed, config["frequency"])
+
+        convert_ascii(config, grid, "wall")
 
         animate_path(stdscr, config, term_height, grid, path, start, end)
 
@@ -179,8 +196,9 @@ if __name__ == "__main__":
             config = yaml.safe_load(file)
 
         main(config)
+
     except KeyboardInterrupt:
-        if random.randint(0, 15) == 0:
-            print("\n🗝️  You found a secret exit from the maze.\n")
+        if random.randint(0, 10) == 0:
+            print("\n 🗝️  You found a secret exit from the maze 🗝️\n")
         else:
             print("Closed maze\n")

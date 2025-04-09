@@ -1,3 +1,6 @@
+import math
+
+
 def convert_ascii(config, grid, condition, path=None):
     if condition == "wall":
         ascii_representation = config["ascii"]["maze"]
@@ -77,3 +80,18 @@ def direction(x, y):
         return "N"
     if x == -1 and y == 0:
         return "W"
+
+
+def rainbow_256(i, freq=0.1):
+    # These formulas produce smooth transitions
+    r = math.sin(freq * i + 0) * 127 + 128
+    g = math.sin(freq * i + 2 * math.pi / 3) * 127 + 128
+    b = math.sin(freq * i + 4 * math.pi / 3) * 127 + 128
+
+    # Map to xterm 256-color cube
+    r_code = int(r * 6 / 256)
+    g_code = int(g * 6 / 256)
+    b_code = int(b * 6 / 256)
+
+    color_code = 16 + 36 * r_code + 6 * g_code + b_code
+    return color_code

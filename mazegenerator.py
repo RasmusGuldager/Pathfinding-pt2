@@ -1,20 +1,17 @@
 import random
-from convert_ascii import convert_ascii
-
 
 class Spot:
     def __init__(self, y, x):
         self.x = x
         self.y = y
         self.wall = True
-        self.maze_neighbors = []
-        self.path_neighbors = []
         self.icon = "#"
         self.color_code = None
         self.prev = None
         self.path_id = float("inf")
 
     def find_maze_neighbors(self, grid):
+        self.maze_neighbors = []
         if self.x > 2:
             self.maze_neighbors.append(grid[self.y][self.x - 2])
         if self.x < len(grid[0]) - 3:
@@ -25,6 +22,7 @@ class Spot:
             self.maze_neighbors.append(grid[self.y + 2][self.x])
 
     def find_path_neighbors(self, grid):
+        self.path_neighbors = []
         if self.x > 0:
             self.path_neighbors.append(grid[self.y][self.x - 1])
         if self.x < len(grid[0]) - 1:
@@ -148,8 +146,6 @@ def mazegenerator(config, height, width):
         prims_generate_maze(grid)
     elif config["algorithms"]["maze"] == "dfs":
         dfs_generate_maze(grid)
-
-    grid = convert_ascii(config, grid, "wall")
 
     return grid
 
