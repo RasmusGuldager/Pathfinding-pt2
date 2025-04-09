@@ -12,12 +12,7 @@ class Spot:
         self.icon = "#"
         self.color_code = None
         self.prev = None
-    
-    def __hash__(self):
-        return hash((self.x, self.y))
-    
-    def __eq__(self, other):
-        return isinstance(other, Spot) and self.x == other.x and self.y == other.y
+        self.path_id = float("inf")
 
     def find_maze_neighbors(self, grid):
         if self.x > 2:

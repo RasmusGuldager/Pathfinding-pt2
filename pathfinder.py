@@ -39,6 +39,11 @@ def mark_path(current):
     path.append(current)
     path.reverse()
 
+    id = 0
+    for spot in path:
+        spot.path_id = id
+        id += 1
+
     return path
 
 
