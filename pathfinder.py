@@ -20,7 +20,7 @@ def BFS(config, start, end):
                 neighbor.prev = current
 
         if current == end:
-            #print("Path found!")
+            # print("Path found!")
             path = mark_path(config, current)
             return path
 
@@ -70,11 +70,11 @@ def main(config, height, width, start=None):
         end = grid[height][random.randrange(1, len(grid[0]), 2)]
     else:
         end = grid[height - 1][random.randrange(1, len(grid[0]), 2)]
-        
+
     start.wall = False
     end.wall = False
 
-    if config['algorithms']['path'] == "bfs":
+    if config["algorithms"]["path"] == "bfs":
         path = BFS(config, start, end)
 
     return grid, path, start, end

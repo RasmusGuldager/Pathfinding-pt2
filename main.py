@@ -3,7 +3,7 @@ from convert_ascii import convert_ascii
 import pathfinder
 
 
-def animate_path(stdscr,config, grid, path, start, end):
+def animate_path(stdscr, config, grid, path, start, end):
     stdscr.clear()
 
     start.icon = "S"
@@ -15,16 +15,16 @@ def animate_path(stdscr,config, grid, path, start, end):
             except curses.error:
                 pass
         stdscr.refresh()
-        #time.sleep(0.1)
-    
-    ascii_path = config['ascii']['path']
-    ascii_path = config['ascii_sets'][ascii_path]
+        # time.sleep(0.1)
+
+    ascii_path = config["ascii"]["path"]
+    ascii_path = config["ascii_sets"][ascii_path]
 
     convert_ascii(config, grid, "path", path)
     start.icon = "S"
     end.icon = "E"
 
-    #time.sleep(0.5)
+    # time.sleep(0.5)
 
     curses.use_default_colors()
     if curses.COLORS >= 256:
@@ -56,7 +56,7 @@ def animate_path(stdscr,config, grid, path, start, end):
         stdscr.refresh()
         time.sleep(config["update_time"])
 
-    #time.sleep(0.5)
+    # time.sleep(0.5)
 
 
 def curses_main(stdscr, config):
@@ -77,30 +77,30 @@ def curses_main(stdscr, config):
         prev_size = curr_size
 
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
-          
+
         if not start:
-            grid, path, start, end = pathfinder.main(
-            config, term_height, term_width)
-    
+            grid, path, start, end = pathfinder.main(config, term_height, term_width)
+
         else:
             grid, path, start, end = pathfinder.main(
-            config, term_height, term_width, start=end
-        )
+                config, term_height, term_width, start=end
+            )
 
         animate_path(stdscr, config, grid, path, start, end)
 
 
 def main(config):
-    
+
     while True:
         curses.wrapper(
             curses_main,
             config,
         )
 
+
 if __name__ == "__main__":
     try:
-        with open('config.yaml', 'r') as file:
+        with open("config.yaml", "r") as file:
             config = yaml.safe_load(file)
 
         main(config)
