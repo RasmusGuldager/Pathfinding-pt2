@@ -2,7 +2,7 @@ from mazegenerator import mazegenerator
 import math, random
 
 
-def BFS(start, end):
+def BFS(config, start, end):
     open_set = [start]
     closed_set = []
 
@@ -21,18 +21,19 @@ def BFS(start, end):
 
         if current == end:
             #print("Path found!")
-            path = mark_path(current)
+            path = mark_path(config, current)
             return path
 
 
-def mark_path(current):
+def mark_path(config, current):
     path = [current]
     current = current.prev
     count = 0
+    rainbow_seed = random.randint(0, 1000)
 
     while current.prev is not None:
         path.append(current)
-        current.color_code = rainbow_256(count)
+        current.color_code = rainbow_256(count + rainbow_seed, config["frequency"])
         count += 1
         current = current.prev
 
@@ -42,7 +43,7 @@ def mark_path(current):
     return path
 
 
-def rainbow_256(i, freq=0.1):
+def rainbow_256(i, freq):
     # These formulas produce smooth transitions
     r = math.sin(freq * i + 0) * 127 + 128
     g = math.sin(freq * i + 2 * math.pi / 3) * 127 + 128
@@ -74,6 +75,6 @@ def main(config, height, width, start=None):
     end.wall = False
 
     if config['algorithms']['path'] == "bfs":
-        path = BFS(start, end)
+        path = BFS(config, start, end)
 
     return grid, path, start, end
