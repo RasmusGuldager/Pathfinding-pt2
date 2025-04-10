@@ -1,0 +1,33 @@
+# Update time in s
+update_time: 0.04
+
+
+# Rainbow frequency (standard 0.1)
+frequency: 0.1
+
+algorithms:
+  # Choose between dfs and prims
+  maze: prims
+
+  # Choose bfs
+  path: bfs
+
+# Width and height of the maze (only if no animation)
+dimensions:
+  width: 141
+  height: 33
+
+# Choose ascii from ascii sets
+ascii:
+  maze: 1
+  path: 2
+
+ascii_sets:
+  1: ["─", "│", "└", "┘", "┌", "┐", "├", "┤", "┴", "┬", "┼"] # Standard single line
+  2: ["═", "║", "╚", "╝", "╔", "╗", "╠", "╣", "╩", "╦", "╬"] # Standard double line
+  3: ["█", "█", "█", "█", "█", "█", "█", "█", "█", "█", "█"] # Retro. Full Block
+  4: ["─", "║", "╙", "╜", "╓", "╖", "╟", "╢", "╨", "╥", "╫"] # Weird Double Virtical Line
+  5: ["═", "│", "╘", "╛", "╒", "╕", "╞", "╡", "╧", "╤", "╪"] # Weird Double Horizontal Line
+  6: ["░", "░", "░", "░", "░", "░", "░", "░", "░", "░", "░"] # Light Pixel Full Block
+  7: ["▒", "▒", "▒", "▒", "▒", "▒", "▒", "▒", "▒", "▒", "▒"] # Medium Pixel Full Block
+  8: ["▓", "▓", "▓", "▓", "▓", "▓", "▓", "▓", "▓", "▓", "▓"] # Heavy Pixel Full Block
