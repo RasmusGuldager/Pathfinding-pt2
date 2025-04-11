@@ -62,4 +62,4 @@ def main(config, height, width, start=None):
     if config["algorithms"]["path"] == "bfs":
         path = BFS(start, end)
 
-    return grid, path, start, end
+    return grid, path, end

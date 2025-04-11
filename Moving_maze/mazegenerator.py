@@ -7,6 +7,7 @@ class Spot:
         self.wall = True
         self.icon = "#"
         self.color_code = None
+        self.color_pair = None
         self.prev = None
         self.path_id = float("inf")
 
