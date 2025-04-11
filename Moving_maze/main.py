@@ -1,4 +1,4 @@
-import curses, time, yaml, random
+import curses, time, yaml, random, gc
 from convert_ascii import convert_ascii, rainbow_256
 import pathfinder
 
@@ -95,7 +95,16 @@ def animate_path(
         if offset % (height - 1) == 0:
             end = generate_new_grid(
                 config, term_width, height, grid, path, end, random_seed
-            )
+            )   
+
+            removed_rows = [row for row in grid if row[0].y < offset]
+
+            for row in removed_rows:
+                for spot in row:
+                    spot.maze_neighbors.clear()
+                    spot.path_neighbors.clear()
+                    spot.prev = None
+                    del spot
 
             grid[:] = [row for row in grid if row[0].y >= offset]
             path[:] = [spot for spot in path if spot.y >= offset]
@@ -107,16 +116,7 @@ def animate_path(
 
             offset = 0
 
-            for row in grid:
-                for spot in row:
-                    spot.find_path_neighbors(grid)
-
             convert_ascii(config, grid, "path", path)
-
-        if i >= len(path) - 1:
-            break
-
-    time.sleep(0.5)
 
 
 def curses_main(stdscr, config):
@@ -128,7 +128,7 @@ def curses_main(stdscr, config):
 
     curr_size = stdscr.getmaxyx()
 
-    height = 30
+    height = 20
     term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
     height += height % 2 == 0
