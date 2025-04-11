@@ -11,11 +11,6 @@ algorithms:
   # Choose bfs
   path: bfs
 
-# Width and height of the maze (only if no animation)
-dimensions:
-  width: 141
-  height: 33
-
 # Choose ascii from ascii sets
 ascii:
   maze: 1

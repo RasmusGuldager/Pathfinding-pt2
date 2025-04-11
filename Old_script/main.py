@@ -74,7 +74,6 @@ def curses_main(stdscr, config):
 
         if curr_size != prev_size:
             return
-        prev_size = curr_size
 
         term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
