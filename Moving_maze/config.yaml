@@ -1,9 +1,8 @@
 # Update time in s
 update_time: 0.04
 
-
 # Rainbow frequency (standard 0.1)
-frequency: 0.1
+frequency: 0.05
 
 algorithms:
   # Choose between dfs and prims
@@ -11,11 +10,6 @@ algorithms:
 
   # Choose bfs
   path: bfs
-
-# Width and height of the maze (only if no animation)
-dimensions:
-  width: 141
-  height: 33
 
 # Choose ascii from ascii sets
 ascii:

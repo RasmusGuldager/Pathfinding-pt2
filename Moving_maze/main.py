@@ -3,7 +3,9 @@ from convert_ascii import convert_ascii, rainbow_256
 import pathfinder
 
 
-def animate_path(stdscr, config, term_height, grid, path):
+def animate_path(
+    stdscr, config, term_height, term_width, grid, path, height, end, random_seed
+):
     stdscr.clear()
 
     for y, row in enumerate(grid):
@@ -21,23 +23,6 @@ def animate_path(stdscr, config, term_height, grid, path):
     ascii_path = config["ascii_sets"][ascii_path]
 
     time.sleep(0.5)
-
-    # Set color pairs for path
-    curses.use_default_colors()
-    if curses.COLORS >= 256:
-        for i, spot in enumerate(path):
-            if spot.color_code is not None:
-                pair_number = i + 1
-                try:
-                    curses.init_pair(pair_number, spot.color_code, -1)
-                    spot.color_pair = curses.color_pair(pair_number)
-                except curses.error:
-                    spot.color_pair = curses.A_NORMAL
-            else:
-                spot.color_pair = curses.A_NORMAL
-    else:
-        for spot in path:
-            spot.color_pair = curses.A_NORMAL
 
     convert_ascii(config, grid, "path", path)
     offset = 0
@@ -106,6 +91,13 @@ def animate_path(stdscr, config, term_height, grid, path):
 
             stdscr.refresh()
             time.sleep(config["update_time"])
+
+        if offset % height - 1 == 0:
+            end = generate_new_grid(
+                config, term_width, height, grid, path, end, random_seed
+            )
+            convert_ascii(config, grid, "path", path)
+
         if i >= len(path) - 1:
             break
 
@@ -115,80 +107,87 @@ def animate_path(stdscr, config, term_height, grid, path):
 def curses_main(stdscr, config):
     curses.curs_set(0)
     curses.start_color()
+    curses.use_default_colors()
     stdscr.keypad(True)
     stdscr.nodelay(True)
 
-    prev_size = stdscr.getmaxyx()
+    curr_size = stdscr.getmaxyx()
 
-    while True:
-        curr_size = stdscr.getmaxyx()
+    height = 20
+    term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
-        if curr_size != prev_size:
-            return
-        prev_size = curr_size
+    height += height % 2 == 0
 
-        height = 20
-        term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
+    grid, path, end = setup(config, term_width, height)
 
-        height += height % 2 == 0
+    iterations = 3
+    random_seed = random.randint(0, 255)
 
-        grid = []
-        path = []
-        start = None
+    for i in range(iterations):
+        end = generate_new_grid(
+            config, term_width, height, grid, path, end, random_seed
+        )
 
-        iterations = 50
+    animate_path(
+        stdscr, config, term_height, term_width, grid, path, height, end, random_seed
+    )
 
-        for i in range(iterations):
-            if not start:
-                temp_grid, temp_path, start, end = pathfinder.main(
-                    config, height, term_width
-                )
-                temp_grid.pop()
-                temp_path.pop()
 
-            elif i < iterations - 1:
-                temp_grid, temp_path, start, end = pathfinder.main(
-                    config, height, term_width, start=end
-                )
-                temp_grid.pop()
-                temp_path.pop()
+def setup(config, term_width, height):
+    grid, path, end = pathfinder.main(config, height, term_width)
+    grid.pop()
+    path.pop()
 
-            else:
-                temp_grid, temp_path, start, end = pathfinder.main(
-                    config, height, term_width, start=end
-                )
+    for spot in range(len(path)):
+        path[spot].path_id = spot
 
-            for spot in range(len(temp_path)):
-                temp_path[spot].path_id = len(path) + spot
+    for row in grid:
+        for spot in row:
+            spot.find_path_neighbors(grid)
 
-            for row in temp_grid:
-                for spot in row:
-                    spot.y = len(grid) + spot.y
+    return grid, path, end
 
-            grid.extend(temp_grid)
-            path.extend(temp_path)
 
-        for row in grid:
-            for spot in row:
-                spot.find_path_neighbors(grid)
+def generate_new_grid(config, term_width, height, grid, path, end, random_seed):
+    temp_grid, temp_path, end = pathfinder.main(config, height, term_width, start=end)
+    temp_grid.pop()
+    temp_path.pop()
 
-        random_seed = random.randint(0, 255)
+    for spot in temp_path:
+        spot.path_id = path[-1].path_id + 1
+        path.append(spot)
 
-        for i in range(len(path)):
-            path[i].color_code = rainbow_256(i + random_seed, config["frequency"])
+    for row in temp_grid:
+        for spot in row:
+            spot.y = grid[-1][-1].y + spot.y + 1
 
-        convert_ascii(config, grid, "wall")
+    grid.extend(temp_grid)
 
-        animate_path(stdscr, config, term_height, grid, path)
+    for row in grid:
+        for spot in row:
+            spot.find_path_neighbors(grid)
+
+    for i in range(len(path)):
+        path[i].color_code = rainbow_256(i + random_seed, config["frequency"])
+
+    # Set color pairs for path
+    if curses.COLORS >= 256:
+        for i, spot in enumerate(path):
+            if spot.color_code is not None:
+                pair_number = i + 1
+                curses.init_pair(pair_number, spot.color_code, -1)
+                spot.color_pair = curses.color_pair(pair_number)
+
+    convert_ascii(config, grid, "wall")
+
+    return end
 
 
 def main(config):
-
-    while True:
-        curses.wrapper(
-            curses_main,
-            config,
-        )
+    curses.wrapper(
+        curses_main,
+        config,
+    )
 
 
 if __name__ == "__main__":
