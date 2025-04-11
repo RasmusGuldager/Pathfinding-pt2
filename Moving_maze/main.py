@@ -92,10 +92,25 @@ def animate_path(
             stdscr.refresh()
             time.sleep(config["update_time"])
 
-        if offset % height - 1 == 0:
+        if offset % (height - 1) == 0:
             end = generate_new_grid(
                 config, term_width, height, grid, path, end, random_seed
             )
+
+            grid[:] = [row for row in grid if row[0].y >= offset]
+            path[:] = [spot for spot in path if spot.y >= offset]
+
+            min_y = grid[0][0].y
+            for row in grid:
+                for spot in row:
+                    spot.y -= min_y
+
+            offset = 0
+
+            for row in grid:
+                for spot in row:
+                    spot.find_path_neighbors(grid)
+
             convert_ascii(config, grid, "path", path)
 
         if i >= len(path) - 1:
@@ -113,17 +128,16 @@ def curses_main(stdscr, config):
 
     curr_size = stdscr.getmaxyx()
 
-    height = 20
+    height = 30
     term_height, term_width = curr_size[0] - 1, curr_size[1] - 1
 
     height += height % 2 == 0
 
     grid, path, end = setup(config, term_width, height)
 
-    iterations = 3
     random_seed = random.randint(0, 255)
 
-    for i in range(iterations):
+    for i in range(3):
         end = generate_new_grid(
             config, term_width, height, grid, path, end, random_seed
         )
@@ -168,7 +182,7 @@ def generate_new_grid(config, term_width, height, grid, path, end, random_seed):
             spot.find_path_neighbors(grid)
 
     for i in range(len(path)):
-        path[i].color_code = rainbow_256(i + random_seed, config["frequency"])
+        path[i].color_code = rainbow_256(path[i].path_id + random_seed, config["frequency"])
 
     # Set color pairs for path
     if curses.COLORS >= 256:
